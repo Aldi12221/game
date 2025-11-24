@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple 2D Battle Game</title>
+    
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Posisikan horizontal di tengah */
+            align-items: center;    /* Posisikan vertikal di tengah */
+            min-height: 100vh;      /* Set tinggi minimum layar penuh */
+            background-color: #222; /* Warna latar belakang halaman */
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Sembunyikan scroll bar jika ada */
+        }
+        
+        canvas {
+            /* Berikan sedikit batas visual pada panggung game */
+            border: 5px solid white; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background-color: #555; /* Warna dasar canvas sebelum JS menggambarnya */
+        }
+    </style>
+</head>
+<body>
+    
+    <canvas id="gameCanvas" width="1024" height="576"></canvas> 
+    
+    <script src="script.js"></script>
+
+</body>
+</html>

@@ -1,35 +1,1665 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple 2D Battle Game</title>
-    
+    <title>Bomberman Game</title>
     <style>
-        body {
+        * {
             margin: 0;
-            display: flex;
-            justify-content: center; /* Posisikan horizontal di tengah */
-            align-items: center;    /* Posisikan vertikal di tengah */
-            min-height: 100vh;      /* Set tinggi minimum layar penuh */
-            background-color: #222; /* Warna latar belakang halaman */
-            font-family: Arial, sans-serif;
-            overflow: hidden; /* Sembunyikan scroll bar jika ada */
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        canvas {
-            /* Berikan sedikit batas visual pada panggung game */
-            border: 5px solid white; 
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            background-color: #555; /* Warna dasar canvas sebelum JS menggambarnya */
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .screen {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h1 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        h2 {
+            color: #4dccff;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        input {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 300px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+        }
+
+        button {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 75, 43, 0.6);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .easy {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+
+        .medium {
+            background: linear-gradient(to right, #ffa751, #ffe259);
+            color: #333;
+        }
+
+        .hard {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+
+        .countdown {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
+            margin: 30px 0;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: #222;
+            border: 3px solid #444;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+
+        .cell {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .wall {
+            background: #555;
+            background-image: linear-gradient(45deg, #666 25%, transparent 25%), 
+                              linear-gradient(-45deg, #666 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #666 75%), 
+                              linear-gradient(-45deg, transparent 75%, #666 75%);
+            background-size: 10px 10px;
+            background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+        }
+
+        .brick {
+            background: #8B4513;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect width="20" height="20" fill="%237a3a0f"/><path d="M0,0 L20,0 L20,2 L0,2 Z" fill="%239c5a2a"/><path d="M0,18 L20,18 L20,20 L0,20 Z" fill="%236a2a0a"/></svg>');
+        }
+
+        .player {
+            width: 80%;
+            height: 80%;
+            position: absolute;
+            z-index: 10;
+            background: #4dccff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .enemy {
+            width: 80%;
+            height: 80%;
+            position: absolute;
+            z-index: 10;
+            background: #ff416c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .enemy.frozen {
+            background: #4dccff;
+            animation: freeze-pulse 1s infinite;
+        }
+
+        .enemy::before {
+            content: "🐶";
+            font-size: 1.2rem;
+        }
+
+        @keyframes freeze-pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .bomb {
+            background: #333;
+            border-radius: 50%;
+            width: 60%;
+            height: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            position: absolute;
+            z-index: 5;
+            animation: bomb-pulse 1s infinite;
+            font-weight: bold;
+        }
+
+        .bomb::before {
+            content: "💣";
+            font-size: 1rem;
+        }
+
+        @keyframes bomb-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .explosion {
+            background: #ffcc00;
+            animation: pulse 0.3s infinite;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 8;
+            border-radius: 2px;
+        }
+
+        .explosion::before {
+            content: "💥";
+            font-size: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .item {
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            position: absolute;
+            z-index: 7;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .heart {
+            background: #ff416c;
+            color: white;
+        }
+
+        .heart::before {
+            content: "❤️";
+        }
+
+        .broken-heart {
+            background: #ff416c;
+            color: white;
+            animation: broken-heart-pulse 0.5s infinite;
+        }
+
+        .broken-heart::before {
+            content: "💔";
+        }
+
+        @keyframes broken-heart-pulse {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .tnt {
+            background: #ff9900;
+            color: black;
+        }
+
+        .tnt::before {
+            content: "🧨";
+        }
+
+        .ice {
+            background: #4dccff;
+            color: white;
+        }
+
+        .ice::before {
+            content: "❄️";
+        }
+
+        .speed {
+            background: #96c93d;
+            color: white;
+        }
+
+        .speed::before {
+            content: "⚡";
+        }
+
+        .bomb-item {
+            background: #8B4513;
+            color: white;
+        }
+
+        .bomb-item::before {
+            content: "💣";
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .status-effect {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+
+        .control-key {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            padding: 8px 15px;
+            margin: 0 5px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .control-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .leaderboard {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .game-over, .win-screen {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .final-stats {
+            margin: 20px 0;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .final-stats div {
+            margin: 8px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .effect-notification {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 100;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .game-container {
+                height: 300px;
+            }
+            
+            .difficulty-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .difficulty-btn {
+                max-width: 200px;
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    
-    <canvas id="gameCanvas" width="1024" height="576"></canvas> 
-    
-    <script src="script.js"></script>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <h1>BOMBERMAN</h1>
+            <p>Selamat datang di game Bomberman! Hancurkan tembok, kumpulkan item, dan kalahkan semua musuh untuk menang.</p>
+            
+            <div class="input-group">
+                <input type="text" id="player-name" placeholder="Masukkan nama Anda">
+                <p id="name-error" style="color: red; display: none;">Harap masukkan nama Anda!</p>
+            </div>
+            
+            <button id="play-btn" disabled>Play Game</button>
+        </div>
 
+        <!-- Difficulty Selection -->
+        <div id="difficulty-screen" class="screen">
+            <h1>Pilih Tingkat Kesulitan</h1>
+            <p>Pilih tingkat kesulitan yang sesuai dengan kemampuan Anda.</p>
+            
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
+                <button class="difficulty-btn medium" data-difficulty="medium">Medium</button>
+                <button class="difficulty-btn hard" data-difficulty="hard">Hard</button>
+            </div>
+            
+            <button id="back-to-welcome">Kembali</button>
+        </div>
+
+        <!-- Countdown Screen -->
+        <div id="countdown-screen" class="screen">
+            <h1>Bersiap!</h1>
+            <div class="countdown" id="countdown">3</div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <h2 id="game-title">Bomberman</h2>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div>HP</div>
+                    <div class="stat-value" id="hp-value">3</div>
+                </div>
+                <div class="stat-item">
+                    <div>Bom Power</div>
+                    <div class="stat-value" id="power-value">1</div>
+                </div>
+                <div class="stat-item">
+                    <div>Bom Limit</div>
+                    <div class="stat-value" id="bomb-limit">1</div>
+                </div>
+                <div class="stat-item">
+                    <div>Musuh Tersisa</div>
+                    <div class="stat-value" id="enemies-value">3</div>
+                </div>
+                <div class="stat-item">
+                    <div>Waktu</div>
+                    <div class="stat-value" id="time-value">0</div>
+                </div>
+            </div>
+            
+            <div class="game-container">
+                <div class="game-grid" id="game-grid">
+                    <!-- Game grid akan diisi oleh JavaScript -->
+                </div>
+                <div id="effect-notification" class="effect-notification hidden"></div>
+            </div>
+            
+            <div class="status-effect" id="status-effect"></div>
+            
+            <div class="controls">
+                <p>Kontrol: Gunakan tombol W,A,S,D atau panah untuk bergerak, Spasi untuk menempatkan bom</p>
+                <div class="control-row">
+                    <div class="control-key">W</div>
+                    <div class="control-key">↑</div>
+                </div>
+                <div class="control-row">
+                    <div class="control-key">A</div>
+                    <div class="control-key">S</div>
+                    <div class="control-key">D</div>
+                </div>
+                <div class="control-row">
+                    <div class="control-key">←</div>
+                    <div class="control-key">↓</div>
+                    <div class="control-key">→</div>
+                </div>
+                <div class="control-row">
+                    <div class="control-key">SPACE</div>
+                </div>
+                <div class="control-info">
+                    Item: ❤️ HP +1 | 💔 HP -1 | 🧨 Power + | ❄️ Stun Musuh | ⚡ Speed + | 💣 Bom +
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen game-over">
+            <h1>GAME OVER</h1>
+            <p>Sayang sekali, Anda kalah!</p>
+            
+            <div class="final-stats">
+                <div>Nama: <span id="final-name"></span></div>
+                <div>Waktu Bermain: <span id="final-time"></span> detik</div>
+                <div>Musuh Dikalahkan: <span id="final-enemies"></span></div>
+                <div>Tembok Dihancurkan: <span id="final-bricks"></span></div>
+                <div>Tingkat Kesulitan: <span id="final-difficulty"></span></div>
+            </div>
+            
+            <button id="save-score">Simpan Skor</button>
+            <button id="leaderboard-btn">Lihat Leaderboard</button>
+            <button id="restart-game">Main Lagi</button>
+        </div>
+
+        <!-- Win Screen -->
+        <div id="win-screen" class="screen win-screen">
+            <h1>SELAMAT!</h1>
+            <p>Anda berhasil mengalahkan semua musuh!</p>
+            
+            <div class="final-stats">
+                <div>Nama: <span id="win-name"></span></div>
+                <div>Waktu Bermain: <span id="win-time"></span> detik</div>
+                <div>Musuh Dikalahkan: <span id="win-enemies"></span></div>
+                <div>Tembok Dihancurkan: <span id="win-bricks"></span></div>
+                <div>Tingkat Kesulitan: <span id="win-difficulty"></span></div>
+            </div>
+            
+            <button id="save-win-score">Simpan Skor</button>
+            <button id="win-leaderboard-btn">Lihat Leaderboard</button>
+            <button id="win-restart">Main Lagi</button>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="screen">
+            <h1>LEADERBOARD</h1>
+            <p>Peringkat pemain terbaik</p>
+            
+            <div class="leaderboard" id="leaderboard-list">
+                <!-- Leaderboard items akan diisi oleh JavaScript -->
+            </div>
+            
+            <button id="back-to-menu">Kembali ke Menu</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            currentScreen: 'welcome',
+            playerName: '',
+            difficulty: 'medium',
+            player: {
+                x: 1,
+                y: 1,
+                hp: 3,
+                power: 1,
+                bombLimit: 1,
+                bombsPlaced: 0,
+                speed: 1,
+                frozen: false,
+                freezeTimer: 0,
+                stunned: false,
+                stunTimer: 0
+            },
+            enemies: [],
+            bombs: [],
+            explosions: [],
+            items: [],
+            walls: [],
+            bricks: [],
+            gameTime: 0,
+            startTime: 0,
+            enemiesDefeated: 0,
+            bricksDestroyed: 0,
+            gameRunning: false,
+            grid: [],
+            lastUpdate: 0,
+            gameLoopId: null,
+            enemyMoveTimer: 0
+        };
+
+        // Game constants
+        const GRID_WIDTH = 15;
+        const GRID_HEIGHT = 10;
+        const CELL_TYPES = {
+            EMPTY: 0,
+            WALL: 1,
+            BRICK: 2,
+            PLAYER: 3,
+            ENEMY: 4,
+            BOMB: 5,
+            EXPLOSION: 6,
+            ITEM: 7
+        };
+
+        // Item types
+        const ITEM_TYPES = {
+            HEART: { type: 'heart', class: 'heart', symbol: '❤️', effect: 'HP +1' },
+            BROKEN_HEART: { type: 'broken-heart', class: 'broken-heart', symbol: '💔', effect: 'HP -1' },
+            TNT: { type: 'tnt', class: 'tnt', symbol: '🧨', effect: 'Power +1' },
+            ICE: { type: 'ice', class: 'ice', symbol: '❄️', effect: 'Stun Musuh 5s' },
+            SPEED: { type: 'speed', class: 'speed', symbol: '⚡', effect: 'Speed +' },
+            BOMB_ITEM: { type: 'bomb_item', class: 'bomb-item', symbol: '💣', effect: 'Bom +' }
+        };
+
+        // DOM Elements
+        const screens = {
+            welcome: document.getElementById('welcome-screen'),
+            difficulty: document.getElementById('difficulty-screen'),
+            countdown: document.getElementById('countdown-screen'),
+            game: document.getElementById('game-screen'),
+            gameOver: document.getElementById('game-over-screen'),
+            win: document.getElementById('win-screen'),
+            leaderboard: document.getElementById('leaderboard-screen')
+        };
+
+        const playerNameInput = document.getElementById('player-name');
+        const playBtn = document.getElementById('play-btn');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        const backToWelcomeBtn = document.getElementById('back-to-welcome');
+        const countdownElement = document.getElementById('countdown');
+        const gameGrid = document.getElementById('game-grid');
+        const hpValue = document.getElementById('hp-value');
+        const powerValue = document.getElementById('power-value');
+        const bombLimitValue = document.getElementById('bomb-limit');
+        const enemiesValue = document.getElementById('enemies-value');
+        const timeValue = document.getElementById('time-value');
+        const saveScoreBtn = document.getElementById('save-score');
+        const leaderboardBtn = document.getElementById('leaderboard-btn');
+        const restartGameBtn = document.getElementById('restart-game');
+        const saveWinScoreBtn = document.getElementById('save-win-score');
+        const winLeaderboardBtn = document.getElementById('win-leaderboard-btn');
+        const winRestartBtn = document.getElementById('win-restart');
+        const backToMenuBtn = document.getElementById('back-to-menu');
+        const finalName = document.getElementById('final-name');
+        const finalTime = document.getElementById('final-time');
+        const finalEnemies = document.getElementById('final-enemies');
+        const finalBricks = document.getElementById('final-bricks');
+        const finalDifficulty = document.getElementById('final-difficulty');
+        const winName = document.getElementById('win-name');
+        const winTime = document.getElementById('win-time');
+        const winEnemies = document.getElementById('win-enemies');
+        const winBricks = document.getElementById('win-bricks');
+        const winDifficulty = document.getElementById('win-difficulty');
+        const leaderboardList = document.getElementById('leaderboard-list');
+        const statusEffect = document.getElementById('status-effect');
+        const effectNotification = document.getElementById('effect-notification');
+
+        // Event Listeners
+        playerNameInput.addEventListener('input', handleNameInput);
+        playBtn.addEventListener('click', showDifficultyScreen);
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', handleDifficultySelection);
+        });
+        backToWelcomeBtn.addEventListener('click', showWelcomeScreen);
+        saveScoreBtn.addEventListener('click', saveScore);
+        leaderboardBtn.addEventListener('click', showLeaderboard);
+        restartGameBtn.addEventListener('click', restartGame);
+        saveWinScoreBtn.addEventListener('click', saveScore);
+        winLeaderboardBtn.addEventListener('click', showLeaderboard);
+        winRestartBtn.addEventListener('click', restartGame);
+        backToMenuBtn.addEventListener('click', showWelcomeScreen);
+
+        // Keyboard controls
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Initialize game
+        function init() {
+            console.log('Game initialized');
+            // Load leaderboard from localStorage
+            loadLeaderboard();
+            
+            // Show welcome screen
+            showScreen('welcome');
+        }
+
+        // Handle name input
+        function handleNameInput() {
+            const name = playerNameInput.value.trim();
+            if (name.length > 0) {
+                playBtn.disabled = false;
+                gameState.playerName = name;
+                document.getElementById('name-error').style.display = 'none';
+            } else {
+                playBtn.disabled = true;
+                document.getElementById('name-error').style.display = 'block';
+            }
+        }
+
+        // Show screens
+        function showScreen(screenName) {
+            console.log('Showing screen:', screenName);
+            // Hide all screens
+            Object.values(screens).forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show the requested screen
+            if (screens[screenName]) {
+                screens[screenName].classList.add('active');
+                gameState.currentScreen = screenName;
+            }
+            
+            // Perform screen-specific actions
+            if (screenName === 'game') {
+                startGame();
+            } else if (screenName === 'countdown') {
+                startCountdown();
+            } else if (screenName === 'gameOver' || screenName === 'win') {
+                // Stop game loop jika beralih ke layar game over atau win
+                if (gameState.gameLoopId) {
+                    cancelAnimationFrame(gameState.gameLoopId);
+                    gameState.gameLoopId = null;
+                }
+            }
+        }
+
+        function showWelcomeScreen() {
+            showScreen('welcome');
+        }
+
+        function showDifficultyScreen() {
+            showScreen('difficulty');
+        }
+
+        function showGameScreen() {
+            showScreen('game');
+        }
+
+        function showGameOverScreen() {
+            finalName.textContent = gameState.playerName;
+            finalTime.textContent = Math.floor(gameState.gameTime);
+            finalEnemies.textContent = gameState.enemiesDefeated;
+            finalBricks.textContent = gameState.bricksDestroyed;
+            finalDifficulty.textContent = gameState.difficulty;
+            showScreen('gameOver');
+        }
+
+        function showWinScreen() {
+            winName.textContent = gameState.playerName;
+            winTime.textContent = Math.floor(gameState.gameTime);
+            winEnemies.textContent = gameState.enemiesDefeated;
+            winBricks.textContent = gameState.bricksDestroyed;
+            winDifficulty.textContent = gameState.difficulty;
+            showScreen('win');
+        }
+
+        function showLeaderboard() {
+            displayLeaderboard();
+            showScreen('leaderboard');
+        }
+
+        // Handle difficulty selection
+        function handleDifficultySelection(e) {
+            gameState.difficulty = e.target.dataset.difficulty;
+            showScreen('countdown');
+        }
+
+        // Countdown before game starts
+        function startCountdown() {
+            let count = 3;
+            countdownElement.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    showGameScreen();
+                }
+            }, 1000);
+        }
+
+        // Initialize and start the game
+        function startGame() {
+            console.log('Starting game...');
+            // Reset game state
+            resetGameState();
+            
+            // Initialize game grid
+            initializeGrid();
+            
+            // Start game loop
+            gameState.gameRunning = true;
+            gameState.startTime = Date.now();
+            gameState.lastUpdate = Date.now();
+            gameLoop();
+        }
+
+        // Reset game state
+        function resetGameState() {
+            console.log('Resetting game state');
+            gameState.player = {
+                x: 1,
+                y: 1,
+                hp: 3,
+                power: 1,
+                bombLimit: 1,
+                bombsPlaced: 0,
+                speed: 1,
+                frozen: false,
+                freezeTimer: 0,
+                stunned: false,
+                stunTimer: 0
+            };
+            
+            gameState.enemies = [];
+            gameState.bombs = [];
+            gameState.explosions = [];
+            gameState.items = [];
+            gameState.walls = [];
+            gameState.bricks = [];
+            gameState.gameTime = 0;
+            gameState.enemiesDefeated = 0;
+            gameState.bricksDestroyed = 0;
+            gameState.lastUpdate = Date.now();
+            gameState.enemyMoveTimer = 0;
+            
+            // Set enemy count and speed based on difficulty
+            let enemyCount, enemySpeed;
+            switch (gameState.difficulty) {
+                case 'easy':
+                    enemyCount = 2;
+                    enemySpeed = 0.8;
+                    break;
+                case 'hard':
+                    enemyCount = 5;
+                    enemySpeed = 1.5;
+                    break;
+                default: // medium
+                    enemyCount = 3;
+                    enemySpeed = 1.0;
+            }
+            
+            // Create enemies with improved spawn logic
+            createEnemies(enemyCount, enemySpeed);
+            
+            updateUI();
+        }
+
+        // Improved enemy spawn logic
+        function createEnemies(enemyCount, enemySpeed) {
+            console.log('Creating enemies:', enemyCount);
+            const safePositions = [];
+            
+            // Collect all safe positions (empty cells)
+            for (let y = 2; y < GRID_HEIGHT - 2; y++) {
+                for (let x = 2; x < GRID_WIDTH - 2; x++) {
+                    // Skip positions near player spawn
+                    if ((x === 1 && y === 1) || 
+                        (x === 2 && y === 1) || 
+                        (x === 1 && y === 2) ||
+                        (x === GRID_WIDTH - 2 && y === GRID_HEIGHT - 2) ||
+                        (x === GRID_WIDTH - 3 && y === GRID_HEIGHT - 2) ||
+                        (x === GRID_WIDTH - 2 && y === GRID_HEIGHT - 3)) {
+                        continue;
+                    }
+                    
+                    // Only consider empty cells
+                    if (gameState.grid[y] && gameState.grid[y][x] === CELL_TYPES.EMPTY) {
+                        safePositions.push({x, y});
+                    }
+                }
+            }
+            
+            console.log('Safe positions found:', safePositions.length);
+            
+            // Shuffle safe positions
+            shuffleArray(safePositions);
+            
+            // Spawn enemies in safe positions
+            for (let i = 0; i < enemyCount && i < safePositions.length; i++) {
+                const pos = safePositions[i];
+                
+                gameState.enemies.push({
+                    x: pos.x,
+                    y: pos.y,
+                    type: 'dog',
+                    speed: enemySpeed,
+                    frozen: false,
+                    freezeTimer: 0,
+                    stunned: false,
+                    stunTimer: 0,
+                    lastMove: 0,
+                    direction: Math.floor(Math.random() * 4) // 0: up, 1: right, 2: down, 3: left
+                });
+                
+                // Update grid
+                gameState.grid[pos.y][pos.x] = CELL_TYPES.ENEMY;
+            }
+            
+            console.log('Enemies created:', gameState.enemies.length);
+        }
+
+        // Helper function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Initialize the game grid
+        function initializeGrid() {
+            console.log('Initializing grid');
+            gameState.grid = [];
+            gameGrid.innerHTML = '';
+            
+            // Create grid cells
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                gameState.grid[y] = [];
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    gameGrid.appendChild(cell);
+                    
+                    // Create borders (walls)
+                    if (x === 0 || y === 0 || x === GRID_WIDTH - 1 || y === GRID_HEIGHT - 1) {
+                        gameState.grid[y][x] = CELL_TYPES.WALL;
+                        cell.classList.add('wall');
+                    } else if (x % 2 === 0 && y % 2 === 0) {
+                        // Create pattern of walls
+                        gameState.grid[y][x] = CELL_TYPES.WALL;
+                        cell.classList.add('wall');
+                    } else if (Math.random() < 0.4 && 
+                              !(x === 1 && y === 1) && 
+                              !(x === 2 && y === 1) && 
+                              !(x === 1 && y === 2) &&
+                              !(x === GRID_WIDTH - 2 && y === GRID_HEIGHT - 2) &&
+                              !(x === GRID_WIDTH - 3 && y === GRID_HEIGHT - 2) &&
+                              !(x === GRID_WIDTH - 2 && y === GRID_HEIGHT - 3)) {
+                        // Create bricks randomly, avoid spawn areas
+                        gameState.grid[y][x] = CELL_TYPES.BRICK;
+                        cell.classList.add('brick');
+                        gameState.bricks.push({x, y});
+                    } else {
+                        gameState.grid[y][x] = CELL_TYPES.EMPTY;
+                    }
+                }
+            }
+            
+            // Place player
+            gameState.grid[1][1] = CELL_TYPES.PLAYER;
+            
+            console.log('Grid initialized');
+        }
+
+        // Main game loop
+        function gameLoop() {
+            if (!gameState.gameRunning) {
+                console.log('Game loop stopped');
+                return;
+            }
+            
+            const now = Date.now();
+            const deltaTime = (now - gameState.lastUpdate) / 1000; // Convert to seconds
+            gameState.lastUpdate = now;
+            
+            // Update game time
+            gameState.gameTime = (now - gameState.startTime) / 1000;
+            
+            // Update player status effects
+            updatePlayerStatus(deltaTime);
+            
+            // Update bombs
+            updateBombs(deltaTime);
+            
+            // Update enemies
+            updateEnemies(deltaTime);
+            
+            // Update explosions
+            updateExplosions(deltaTime);
+            
+            // Check collisions
+            checkCollisions();
+            
+            // Update UI
+            updateUI();
+            
+            // Render game elements
+            renderGame();
+            
+            // Check win/lose conditions
+            if (gameState.player.hp <= 0) {
+                gameState.gameRunning = false;
+                setTimeout(showGameOverScreen, 500);
+                return;
+            }
+            
+            if (gameState.enemies.length === 0) {
+                gameState.gameRunning = false;
+                setTimeout(showWinScreen, 500);
+                return;
+            }
+            
+            // Continue game loop
+            gameState.gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        // Update player status effects
+        function updatePlayerStatus(deltaTime) {
+            // Update freeze status
+            if (gameState.player.frozen) {
+                gameState.player.freezeTimer -= deltaTime;
+                if (gameState.player.freezeTimer <= 0) {
+                    gameState.player.frozen = false;
+                }
+            }
+            
+            // Update stun status
+            if (gameState.player.stunned) {
+                gameState.player.stunTimer -= deltaTime;
+                if (gameState.player.stunTimer <= 0) {
+                    gameState.player.stunned = false;
+                }
+            }
+            
+            // Update status effect display
+            updateStatusEffectDisplay();
+        }
+
+        // Update status effect display
+        function updateStatusEffectDisplay() {
+            let statusText = '';
+            if (gameState.player.frozen) {
+                statusText += `❄️ Frozen: ${Math.ceil(gameState.player.freezeTimer)}s `;
+            }
+            if (gameState.player.stunned) {
+                statusText += `💫 Stunned: ${Math.ceil(gameState.player.stunTimer)}s `;
+            }
+            statusEffect.textContent = statusText;
+        }
+
+        // Update bombs
+        function updateBombs(deltaTime) {
+            for (let i = gameState.bombs.length - 1; i >= 0; i--) {
+                const bomb = gameState.bombs[i];
+                bomb.timer -= deltaTime;
+                
+                // Explode bomb if timer reaches 0
+                if (bomb.timer <= 0) {
+                    explodeBomb(bomb);
+                    gameState.bombs.splice(i, 1);
+                    gameState.player.bombsPlaced--;
+                }
+            }
+        }
+
+        // Explode a bomb
+        function explodeBomb(bomb) {
+            console.log('Bomb exploding at:', bomb.x, bomb.y);
+            // Create explosion at bomb position
+            createExplosion(bomb.x, bomb.y);
+            
+            // Create explosions in four directions based on bomb power
+            for (let dir of ['up', 'down', 'left', 'right']) {
+                let hitWall = false;
+                for (let i = 1; i <= bomb.power && !hitWall; i++) {
+                    let x = bomb.x;
+                    let y = bomb.y;
+                    
+                    switch (dir) {
+                        case 'up': y -= i; break;
+                        case 'down': y += i; break;
+                        case 'left': x -= i; break;
+                        case 'right': x += i; break;
+                    }
+                    
+                    // Stop if we hit a permanent wall
+                    if (x < 0 || x >= GRID_WIDTH || y < 0 || y >= GRID_HEIGHT || 
+                        (gameState.grid[y] && gameState.grid[y][x] === CELL_TYPES.WALL)) {
+                        hitWall = true;
+                        continue;
+                    }
+                    
+                    // Create explosion
+                    createExplosion(x, y);
+                    
+                    // If we hit a brick, destroy it and stop explosion in this direction
+                    if (gameState.grid[y] && gameState.grid[y][x] === CELL_TYPES.BRICK) {
+                        destroyBrick(x, y);
+                        hitWall = true;
+                    }
+                }
+            }
+        }
+
+        // Create explosion at position - FIXED ENEMY DEATH
+        function createExplosion(x, y) {
+            gameState.explosions.push({
+                x: x,
+                y: y,
+                timer: 0.8 // 0.8 second
+            });
+            
+            // Check if player is in explosion
+            if (gameState.player.x === x && gameState.player.y === y) {
+                gameState.player.hp--;
+                showEffectNotification("💥 Terkena Ledakan! -1 HP");
+            }
+            
+            // Check if enemies are in explosion - FIXED ENEMY DEATH
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = gameState.enemies[i];
+                if (enemy.x === x && enemy.y === y) {
+                    // Remove enemy from grid FIRST
+                    if (gameState.grid[enemy.y] && gameState.grid[enemy.y][enemy.x] === CELL_TYPES.ENEMY) {
+                        gameState.grid[enemy.y][enemy.x] = CELL_TYPES.EMPTY;
+                    }
+                    
+                    // Then remove from enemies array
+                    gameState.enemies.splice(i, 1);
+                    gameState.enemiesDefeated++;
+                }
+            }
+            
+            // Check if items are in explosion
+            for (let i = gameState.items.length - 1; i >= 0; i--) {
+                const item = gameState.items[i];
+                if (item.x === x && item.y === y) {
+                    gameState.items.splice(i, 1);
+                }
+            }
+        }
+
+        // Show effect notification
+        function showEffectNotification(message) {
+            effectNotification.textContent = message;
+            effectNotification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                effectNotification.classList.add('hidden');
+            }, 2000);
+        }
+
+        // Update explosions
+        function updateExplosions(deltaTime) {
+            for (let i = gameState.explosions.length - 1; i >= 0; i--) {
+                const explosion = gameState.explosions[i];
+                explosion.timer -= deltaTime;
+                
+                if (explosion.timer <= 0) {
+                    gameState.explosions.splice(i, 1);
+                }
+            }
+        }
+
+        // Destroy a brick
+        function destroyBrick(x, y) {
+            console.log('Destroying brick at:', x, y);
+            // Remove brick from grid
+            if (gameState.grid[y]) {
+                gameState.grid[y][x] = CELL_TYPES.EMPTY;
+            }
+            
+            // Remove brick class from cell
+            const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+            if (cell) {
+                cell.classList.remove('brick');
+            }
+            
+            // Remove from bricks array
+            for (let i = gameState.bricks.length - 1; i >= 0; i--) {
+                if (gameState.bricks[i].x === x && gameState.bricks[i].y === y) {
+                    gameState.bricks.splice(i, 1);
+                    break;
+                }
+            }
+            
+            gameState.bricksDestroyed++;
+            
+            // 40% chance to spawn an item
+            if (Math.random() < 0.4) {
+                spawnItem(x, y);
+            }
+        }
+
+        // Spawn an item at position
+        function spawnItem(x, y) {
+            const itemTypes = Object.values(ITEM_TYPES);
+            const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            
+            gameState.items.push({
+                x: x,
+                y: y,
+                type: randomItem.type,
+                class: randomItem.class,
+                symbol: randomItem.symbol,
+                effect: randomItem.effect
+            });
+            
+            if (gameState.grid[y]) {
+                gameState.grid[y][x] = CELL_TYPES.ITEM;
+            }
+        }
+
+        // Update enemies with improved movement
+        function updateEnemies(deltaTime) {
+            gameState.enemyMoveTimer += deltaTime;
+            
+            for (let enemy of gameState.enemies) {
+                // Skip if enemy is frozen or stunned
+                if (enemy.frozen || enemy.stunned) {
+                    enemy.freezeTimer -= deltaTime;
+                    enemy.stunTimer -= deltaTime;
+                    if (enemy.freezeTimer <= 0) enemy.frozen = false;
+                    if (enemy.stunTimer <= 0) enemy.stunned = false;
+                    continue;
+                }
+                
+                enemy.lastMove += deltaTime;
+                
+                // Move enemy every 0.5 seconds (adjusted by speed)
+                if (enemy.lastMove >= 0.5 / enemy.speed) {
+                    enemy.lastMove = 0;
+                    
+                    // Try to move in current direction
+                    let newX = enemy.x;
+                    let newY = enemy.y;
+                    
+                    switch (enemy.direction) {
+                        case 0: newY--; break; // up
+                        case 1: newX++; break; // right
+                        case 2: newY++; break; // down
+                        case 3: newX--; break; // left
+                    }
+                    
+                    // Check if move is valid
+                    if (newX >= 0 && newX < GRID_WIDTH && newY >= 0 && newY < GRID_HEIGHT) {
+                        const targetCellType = gameState.grid[newY] ? gameState.grid[newY][newX] : CELL_TYPES.WALL;
+                        const canMove = targetCellType === CELL_TYPES.EMPTY || 
+                                      targetCellType === CELL_TYPES.ITEM ||
+                                      targetCellType === CELL_TYPES.PLAYER;
+                        
+                        if (canMove) {
+                            // Update grid
+                            if (gameState.grid[enemy.y]) {
+                                gameState.grid[enemy.y][enemy.x] = CELL_TYPES.EMPTY;
+                            }
+                            if (gameState.grid[newY]) {
+                                gameState.grid[newY][newX] = CELL_TYPES.ENEMY;
+                            }
+                            
+                            // Update enemy position
+                            enemy.x = newX;
+                            enemy.y = newY;
+                        } else {
+                            // Change direction if can't move
+                            enemy.direction = Math.floor(Math.random() * 4);
+                        }
+                    } else {
+                        // Change direction if out of bounds
+                        enemy.direction = Math.floor(Math.random() * 4);
+                    }
+                }
+            }
+        }
+
+        // Render game elements
+        function renderGame() {
+            // Clear all dynamic elements
+            document.querySelectorAll('.player, .enemy, .bomb, .explosion, .item').forEach(el => {
+                el.remove();
+            });
+            
+            // Render player
+            const playerCell = document.querySelector(`.cell[data-x="${gameState.player.x}"][data-y="${gameState.player.y}"]`);
+            if (playerCell) {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player';
+                playerElement.textContent = '😎';
+                if (gameState.player.stunned) {
+                    playerElement.style.background = '#888';
+                    playerElement.textContent = '😵';
+                }
+                playerCell.appendChild(playerElement);
+            }
+            
+            // Render enemies
+            gameState.enemies.forEach(enemy => {
+                const enemyCell = document.querySelector(`.cell[data-x="${enemy.x}"][data-y="${enemy.y}"]`);
+                if (enemyCell) {
+                    const enemyElement = document.createElement('div');
+                    enemyElement.className = `enemy ${enemy.frozen ? 'frozen' : ''} ${enemy.stunned ? 'stunned' : ''}`;
+                    if (enemy.stunned) {
+                        enemyElement.textContent = '💫';
+                    }
+                    enemyCell.appendChild(enemyElement);
+                }
+            });
+            
+            // Render bombs
+            gameState.bombs.forEach(bomb => {
+                const bombCell = document.querySelector(`.cell[data-x="${bomb.x}"][data-y="${bomb.y}"]`);
+                if (bombCell) {
+                    const bombElement = document.createElement('div');
+                    bombElement.className = 'bomb';
+                    bombElement.textContent = Math.ceil(bomb.timer);
+                    bombCell.appendChild(bombElement);
+                }
+            });
+            
+            // Render explosions
+            gameState.explosions.forEach(explosion => {
+                const explosionCell = document.querySelector(`.cell[data-x="${explosion.x}"][data-y="${explosion.y}"]`);
+                if (explosionCell) {
+                    const explosionElement = document.createElement('div');
+                    explosionElement.className = 'explosion';
+                    explosionCell.appendChild(explosionElement);
+                }
+            });
+            
+            // Render items
+            gameState.items.forEach(item => {
+                const itemCell = document.querySelector(`.cell[data-x="${item.x}"][data-y="${item.y}"]`);
+                if (itemCell) {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `item ${item.class}`;
+                    itemCell.appendChild(itemElement);
+                }
+            });
+        }
+
+        // Check collisions
+        function checkCollisions() {
+            // Check player-enemy collisions
+            for (let enemy of gameState.enemies) {
+                if (gameState.player.x === enemy.x && gameState.player.y === enemy.y) {
+                    gameState.player.hp--;
+                    showEffectNotification("💥 Tertabrak Musuh! -1 HP");
+                    // Simple "bounce back"
+                    gameState.player.x = Math.max(1, gameState.player.x - 1);
+                    break;
+                }
+            }
+            
+            // Check player-item collisions
+            for (let i = gameState.items.length - 1; i >= 0; i--) {
+                const item = gameState.items[i];
+                if (gameState.player.x === item.x && gameState.player.y === item.y) {
+                    applyItemEffect(item);
+                    gameState.items.splice(i, 1);
+                    
+                    // Update grid
+                    if (gameState.grid[item.y]) {
+                        gameState.grid[item.y][item.x] = CELL_TYPES.EMPTY;
+                    }
+                }
+            }
+        }
+
+        // Apply item effect to player
+        function applyItemEffect(item) {
+            switch (item.type) {
+                case 'heart':
+                    gameState.player.hp++;
+                    showEffectNotification("❤️ HP +1");
+                    break;
+                case 'broken-heart':
+                    gameState.player.hp = Math.max(0, gameState.player.hp - 1);
+                    showEffectNotification("💔 HP -1");
+                    break;
+                case 'tnt':
+                    gameState.player.power++;
+                    showEffectNotification("🧨 Power Bomb +1");
+                    break;
+                case 'ice':
+                    // Stun all enemies
+                    for (let enemy of gameState.enemies) {
+                        enemy.stunned = true;
+                        enemy.stunTimer = 5.0; // 5 seconds
+                    }
+                    showEffectNotification("❄️ Musuh Terstun 5s");
+                    break;
+                case 'speed':
+                    gameState.player.speed = Math.min(2, gameState.player.speed + 0.2);
+                    showEffectNotification("⚡ Speed +");
+                    break;
+                case 'bomb_item':
+                    gameState.player.bombLimit++;
+                    showEffectNotification("💣 Bom +1");
+                    break;
+            }
+        }
+
+        // Handle keyboard input
+        function handleKeyDown(e) {
+            if (gameState.currentScreen !== 'game' || !gameState.gameRunning) return;
+            if (gameState.player.frozen || gameState.player.stunned) return;
+            
+            let newX = gameState.player.x;
+            let newY = gameState.player.y;
+            let moved = false;
+            
+            // Support both WASD and arrow keys
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                newY--;
+                moved = true;
+            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                newY++;
+                moved = true;
+            } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                newX--;
+                moved = true;
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                newX++;
+                moved = true;
+            } else if (e.key === ' ') {
+                placeBomb();
+                return;
+            }
+            
+            if (moved) {
+                // Check if move is valid
+                if (newX >= 0 && newX < GRID_WIDTH && newY >= 0 && newY < GRID_HEIGHT) {
+                    const targetCellType = gameState.grid[newY] ? gameState.grid[newY][newX] : CELL_TYPES.WALL;
+                    const canMove = targetCellType === CELL_TYPES.EMPTY || 
+                                  targetCellType === CELL_TYPES.ITEM;
+                    
+                    if (canMove) {
+                        // Update grid
+                        if (gameState.grid[gameState.player.y]) {
+                            gameState.grid[gameState.player.y][gameState.player.x] = CELL_TYPES.EMPTY;
+                        }
+                        if (gameState.grid[newY]) {
+                            gameState.grid[newY][newX] = CELL_TYPES.PLAYER;
+                        }
+                        
+                        // Update player position
+                        gameState.player.x = newX;
+                        gameState.player.y = newY;
+                    }
+                }
+            }
+        }
+
+        // Place a bomb at player's position
+        function placeBomb() {
+            // Check bomb limit
+            if (gameState.player.bombsPlaced >= gameState.player.bombLimit) {
+                return;
+            }
+            
+            // Check if there's already a bomb at this position
+            for (let bomb of gameState.bombs) {
+                if (bomb.x === gameState.player.x && bomb.y === gameState.player.y) {
+                    return;
+                }
+            }
+            
+            // Create new bomb
+            gameState.bombs.push({
+                x: gameState.player.x,
+                y: gameState.player.y,
+                timer: 3.0, // 3 seconds
+                power: gameState.player.power
+            });
+            
+            gameState.player.bombsPlaced++;
+        }
+
+        // Update UI elements
+        function updateUI() {
+            hpValue.textContent = gameState.player.hp;
+            powerValue.textContent = gameState.player.power;
+            bombLimitValue.textContent = gameState.player.bombLimit;
+            enemiesValue.textContent = gameState.enemies.length;
+            timeValue.textContent = Math.floor(gameState.gameTime);
+        }
+
+        // Save score to localStorage
+        function saveScore() {
+            const leaderboard = JSON.parse(localStorage.getItem('bombermanLeaderboard') || '[]');
+            
+            leaderboard.push({
+                name: gameState.playerName,
+                time: Math.floor(gameState.gameTime),
+                enemies: gameState.enemiesDefeated,
+                bricks: gameState.bricksDestroyed,
+                difficulty: gameState.difficulty,
+                date: new Date().toISOString()
+            });
+            
+            // Sort by time (ascending) and enemies defeated (descending)
+            leaderboard.sort((a, b) => {
+                if (a.time !== b.time) return a.time - b.time;
+                return b.enemies - a.enemies;
+            });
+            
+            // Keep only top 10 scores
+            if (leaderboard.length > 10) {
+                leaderboard.splice(10);
+            }
+            
+            localStorage.setItem('bombermanLeaderboard', JSON.stringify(leaderboard));
+            alert('Skor berhasil disimpan!');
+        }
+
+        // Load leaderboard from localStorage
+        function loadLeaderboard() {
+            // This function is called on init, no need to do anything else
+        }
+
+        // Display leaderboard
+        function displayLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('bombermanLeaderboard') || '[]');
+            leaderboardList.innerHTML = '';
+            
+            if (leaderboard.length === 0) {
+                leaderboardList.innerHTML = '<p>Belum ada skor yang tersimpan.</p>';
+                return;
+            }
+            
+            leaderboard.forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                
+                item.innerHTML = `
+                    <div class="leaderboard-rank">#${index + 1}</div>
+                    <div>${entry.name}</div>
+                    <div>${entry.time}s</div>
+                    <div>${entry.enemies} musuh</div>
+                    <div>${entry.difficulty}</div>
+                `;
+                
+                leaderboardList.appendChild(item);
+            });
+        }
+
+        // Restart game
+        function restartGame() {
+            // Stop current game loop if running
+            if (gameState.gameLoopId) {
+                cancelAnimationFrame(gameState.gameLoopId);
+                gameState.gameLoopId = null;
+            }
+            
+            showScreen('welcome');
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>

@@ -1,0 +1,15 @@
+#game {
+    display: grid;
+    grid-template-columns: repeat(10, 35px);
+    grid-template-rows: repeat(10, 35px);
+    gap: 1px;
+    margin-top:20%;
+}
+.cell{
+    width: 35px;
+    height: 35px;
+    background:#2d2d2d;
+}
+.wall{
+    background:#666;
+}

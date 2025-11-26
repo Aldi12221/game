@@ -1,34 +1,39 @@
-const canvas = document.getElementById('game')
-const ctx = canvas.getContext('2d')
+const WIDTH =10;
+const HEIGHT =10;
 
-let player={
-x:50,
-y:50,
-size:30,
-speed:3
+let map=[];
 
-}
-let keys={}
+for(let y=0;y<HEIGHT;y++
+){
+    map[y]=[];
 
-window.addEventListener('keydown',(e)=>{keys[e.key]=true})
-window.addEventListener('keyup',(e)=>{keys[e.key]=false})
+    for(let x=0;x<WIDTH;x++){
+        
+        if(y===0 || y===HEIGHT-1 || x=== 0||x===WIDTH-1){
+            map[y][x]=1;
+        }else{
+            map[y][x]=0
+        }
 
-function update(){
-    if(keys['w']){player.y -=player.speed}
-    if(keys['s']){player.y +=player.speed}
-    if(keys['a']){player.x -=player.speed}
-    if(keys['d']){player.x +=player.speed}
+    }
 }
 
-function render(){
-    ctx.clearRect(0,0,400,400)
-    ctx.fillStyle='blue'
-    ctx.fillRect(player.x,player.y,player.size,player.size)
-}
-function gameLoop(){
-    update()
-    render()
-    requestAnimationFrame(gameLoop)
-}
-gameLoop()
+function render (){
+    const gameElement = document.getElementById('game')
+    gameElement.innerHTML = '';
 
+    for(let y=0;y<HEIGHT;y++){
+        for(let x=0;x<WIDTH;x++){
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            if (map[y][x] === 1) {
+                cell.classList.add("wall"); 
+            }
+            
+            
+            gameElement.appendChild(cell);
+        }
+        }
+
+}
+render();

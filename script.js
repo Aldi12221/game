@@ -308,7 +308,7 @@ function pickupItemAt(x,y){
   }
 }
 
-// ============ Input & movement (tile-based) ============
+
 var keys = {};
 window.addEventListener('keydown', function(e){
   keys[e.key.toLowerCase()] = true;

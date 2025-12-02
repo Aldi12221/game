@@ -2,12 +2,17 @@ const WIDTH =10;
 const HEIGHT =10;
 
 let bom =[];
+let items =[]
 let ledakan =[];
+let musuh=[]
 let map=[];
-let player ={
-    x:1,
-    y:1
-}
+let player = {
+    x: 1,
+    y: 1,
+    speed: 1,
+    power: 1,        
+    maxBombs: 1      
+};
 
 
 for(let y=0; y <HEIGHT; y++
@@ -18,11 +23,37 @@ for(let y=0; y <HEIGHT; y++
         
         if((y === 0 || y === HEIGHT-1 || x=== 0||x===WIDTH-1 )||( y===5 && x === 5)){
             map[y][x]=1;
+
+        }else if(Math.random() < 0.3 ){
+            map[y][x]= 2;
+
         }else{
-            map[y][x]=0
+            map[y][x]= 0
         }
 
     }
+}
+function ambilItem (){
+    for(let i = items.length -1;i>=0;i--){
+        if(items[i].x ===player.x && items[i].y ===player.y){
+            applyItem(items[i].type)
+            items.splice(i,1)
+        }
+    }
+}
+
+function applyItem (type){
+    if(type ==='speed'){
+        player.speed =(player.speed ||1)+1
+    }
+    if(type ==='power'){
+        player.power++
+    }
+    if(type ==='flame'){
+        player.maxBombs++
+    }
+
+
 }
 
 function render (){
@@ -35,6 +66,9 @@ function render (){
             cell.classList.add('cell');
             if (map[y][x] === 1) {
                 cell.classList.add("wall"); 
+            }
+            if(map[y][x]===2){
+                cell.style.background='brown'
             }
             if(player.x === x && player.y === y){
                 cell.style.background='yellow'
@@ -50,6 +84,19 @@ function render (){
                     cell.style.background ='orange'
             
             }}
+            for(let it of items){
+                if(it.x === x && it.y === y){
+                    if(it.type ==='speed'){
+                        cell.style.background ='lightblue'
+                    }
+                    if(it.type ==='power'){
+                        cell.style.background ='purple'
+                    }
+                    if(it.type ==='flame'){
+                        cell.style.background ='orange'
+                    }
+                }
+            }
             
             
             gameElement.appendChild(cell);
@@ -67,6 +114,21 @@ function createLedakan(x,y){
     })
 
 }
+function dropItem(x,y){
+    if(Math.random() < 0.4){
+
+        let listItem =['speed','power','flame']
+        let randomItem=listItem[Math.floor(Math.random()* listItem.length)]
+        items.push({
+            x:x,
+            y:y,
+            type:randomItem
+        })
+    }
+
+}
+
+
 function updateLedakan(){
     for ( let i = ledakan.length -1;i>=0;i--){
         ledakan[i].timer--
@@ -75,36 +137,70 @@ function updateLedakan(){
         }}
 
 
-function placeBomb(){
+function posisiLedakan(x,y){
+    if(x<0 || y<0|| x>=WIDTH || y>=HEIGHT)return;
+    if(map[y][x]===1)return;
+    if(map[y][x]===2){
+        map[y][x]=0;
+        createLedakan (x,y)
+        dropItem(x,y)
+        return;
+    }
+    if(map[y][x]===0){
+        createLedakan(x,y)
+    }
+
+}
+
+
+function placebom(){
     for(let b of bom){
         if(b.x === player.x && b.y ===player.y){
             return;
+        }
+        if(bom.length >=(player.maxBombs ||1)){
+            return
         }
         
     }
     bom.push({
                 x:player.x,
                 y:player.y,
-                timer:30  
+                timer:30,
+                power:player.power
 
             })
             render();
 }
-function ledakanBom(x,y){
-    createLedakan(x,y);
-    if (map[y-1][x]===0)createLedakan(x,y-1)
-    if (map[y+1][x]===0)createLedakan(x,y+1)
-    if (map[y][x-1]===0)createLedakan(x-1,y)
-    if (map[y][x+1]===0)createLedakan(x+1,y)
+function ledakanBom(b) {
+    createLedakan(b.x, b.y);
+
+    
+    for (let i = 1; i <= b.power; i++) {
+        posisiLedakan(b.x + i, b.y);
+    }
+    
+    for (let i = 1; i <= b.power; i++) {
+        posisiLedakan(b.x - i, b.y);
+    }
+   
+    for (let i = 1; i <= b.power; i++) {
+        posisiLedakan(b.x, b.y + i);
+    }
+    
+    for (let i = 1; i <= b.power; i++) {
+        posisiLedakan(b.x, b.y - i);
+    }
 }
 
 
 
-function updateBombs (){
+
+function updateboms (){
     for ( let i = bom.length -1;i>=0;i--){
         bom[i].timer--
         if( bom[i].timer <=0){
-            ledakanBom(bom[i].x,bom[i].y)
+            ledakanBom(bom[i])
             bom.splice(i,1)
 
         }
@@ -126,14 +222,15 @@ document.addEventListener('keydown',(e)=>{
         
     }
     if(e.key ===" "|| e.key ==='Enter'){
-        placeBomb()
+        placebom()
     }
+    ambilItem()
 
     render();
 
 })
 setInterval (()=>{
-    updateBombs()
+    updateboms()
     updateLedakan()
     render()
 },100)

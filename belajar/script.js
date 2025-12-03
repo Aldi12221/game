@@ -30,9 +30,17 @@ for(let y=0; y <HEIGHT; y++
         }else{
             map[y][x]= 0
         }
-
+        
     }
+    
 }
+musuh.push({
+    x:8,
+    y:8,
+    dir:'left' 
+})
+
+
 function ambilItem (){
     for(let i = items.length -1;i>=0;i--){
         if(items[i].x ===player.x && items[i].y ===player.y){
@@ -54,6 +62,33 @@ function applyItem (type){
     }
 
 
+}
+function updateMusuh (){
+    for(let m of musuh){
+
+        let ny =m.y;
+        let nx =m.x;
+ 
+        if(m.dir==='left')nx--;
+        if(m.dir==='right')nx++;
+        if(m.dir==='up')ny--;
+        if(m.dir==='down')ny++;
+
+        if(map[ny][nx]!==0){
+            let dirs =['left','right','up','down']
+            m.dir =dirs[Math.floor(Math.random()* 4)]
+            continue;
+        }
+        m.x=nx;
+        m.y=ny;
+
+        if(m.x === player.x && m.y === player.y){
+            alert ('Game Over')
+            window.location.reload()
+            break;
+        }
+    }
+   
 }
 
 function render (){
@@ -97,6 +132,11 @@ function render (){
                     }
                 }
             }
+            for (let m of musuh){
+                if(m.x === x && m.y === y){
+                    cell.style.background ='green'
+                }
+            }
             
             
             gameElement.appendChild(cell);
@@ -132,6 +172,18 @@ function dropItem(x,y){
 function updateLedakan(){
     for ( let i = ledakan.length -1;i>=0;i--){
         ledakan[i].timer--
+
+        for(let i= musuh.length -1;i>=0;i--){
+            for (let l of ledakan){
+                if(l.x === musuh[i].x && l.y === musuh[i].y){
+                    musuh.split(i , 1)
+                    break;
+                }
+            }
+        }
+
+
+
         if( ledakan[i].timer <=0){
             ledakan.splice(i,1)}
         }}
@@ -232,6 +284,13 @@ document.addEventListener('keydown',(e)=>{
 setInterval (()=>{
     updateboms()
     updateLedakan()
+   
     render()
 },100)
+setInterval(()=>{
+    updateMusuh()
+    render()
+
+},1000)
  render();
+

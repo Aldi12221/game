@@ -63,33 +63,54 @@ function applyItem (type){
 
 
 }
-function updateMusuh (){
-    for(let m of musuh){
+function updateMusuh() {
+    for (let e of musuh) {
 
-        let ny =m.y;
-        let nx =m.x;
- 
-        if(m.dir==='left')nx--;
-        if(m.dir==='right')nx++;
-        if(m.dir==='up')ny--;
-        if(m.dir==='down')ny++;
+        // arah gerak sekarang
+        let dirs = {
+            up:    { x: 0,  y: -1 },
+            down:  { x: 0,  y: 1 },
+            left:  { x: -1, y: 0 },
+            right: { x: 1,  y: 0 }
+        };
 
-        if(map[ny][nx]!==0){
-            let dirs =['left','right','up','down']
-            m.dir =dirs[Math.floor(Math.random()* 4)]
-            continue;
+        let move = dirs[e.dir];
+        let nx = e.x + move.x;
+        let ny = e.y + move.y;
+
+        // ===== 1. Jika jalan lurus bebas, lanjut ==========
+        if (map[ny][nx] === 0) {
+            e.x = nx;
+            e.y = ny;
+        } 
+        else {
+            // ===== 2. Kalau tembok di depan → cari ruang lain =====
+
+            let possible = [];
+
+            for (let d in dirs) {
+                let dx = e.x + dirs[d].x;
+                let dy = e.y + dirs[d].y;
+
+                if (map[dy][dx] === 0) {
+                    possible.push(d);
+                }
+            }
+
+            // jika ada pilihan → ambil random
+            if (possible.length > 0) {
+                e.dir = possible[Math.floor(Math.random() * possible.length)];
+            }
         }
-        m.x=nx;
-        m.y=ny;
 
-        if(m.x === player.x && m.y === player.y){
-            alert ('Game Over')
-            window.location.reload()
-            break;
+        // ===== 3. Cek jika musuh menabrak player =====
+        if (e.x === player.x && e.y === player.y) {
+            alert("GAME OVER! Kamu ditabrak musuh");
+            location.reload();
         }
     }
-   
 }
+
 
 function render (){
     const gameElement = document.getElementById('game')

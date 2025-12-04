@@ -1,99 +1,279 @@
-*, *::before, *::after{
-    box-sizing: border-box; 
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
 }
-
-*{
-    margin: 0; 
-    padding: 0; 
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
 }
-
-ul[role='list'], ol[role='list']{
-    list-style: none; 
-}
-
-html:focus-within{
-    scroll-behavior: smooth; 
-}
-
-a:not([class]){
-    text-decoration-skip-ink: auto; 
-}
-
-img, picture, svg, video, canvas{
-    max-width: 100%;
-    height: auto; 
-    vertical-align: middle; 
-    font-style: italic; 
-    background-repeat: no-repeat; 
-    background-size: cover;
-}
-
-input, button, textarea, select{
-    font: inherit; 
-}
-
-@media (prefers-reduced-motion: reduce){
-    html:focus-within {
-        scroll-behavior: auto;
-    }
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-        transition: none;
-    }
-}
-
-body, html{
-    height: 100%; 
-    scroll-behavior: smooth; 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 body {
-    
-    background-color: #f0f0f0;
-    color: black;
-    
+	line-height: 1;
+    font-family: 'Source Sans 3' ;
 }
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
 .container{
+    width:80%;
+    margin:auto;    
+}
+.kotak{
+    position: absolute;
+    width: 40%;
+    height: 136%;
+    z-index: -1;
+    right: 45px;
+    
+}
+.header{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    margin-top: 10px;
+    align-items: center;    
+    padding: 20px;    
+    
 }
-nav {
-    background-color: black;
-    color:#f0f0f0
+.header img{
+    width: 24px;
+    height: 24px;
+
+    flex-shrink: 0;
 }
-.dark{
-    background-color: black;
-    color:#f0f0f0
+
+.header .title{
+    margin-left: 15px;
+    margin-right: 93px;
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: bold;
+    
 }
-.dark2{
-    background-color: #f0f0f0;
-    color:black
+.header .nav{
+    display: flex;
+    gap:50px;
+   
+
+
+    
+}
+.header .nav a{
+    text-decoration: none;
+    color: black;
+    font-size: 16px;
 
 }
-.card{
-    
-    width: 600px;
-    height: 230px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+.header .nav a:hover{
+    color: #203271;
+    scale: 120%;
 }
+
+.header .nav-right{
+    
+   margin-left: auto;
+
+
+}
+.header .nav-right div {
+    display: inline-block;
+    padding: 20px;
+
+}
+.header .nav-right .login{
+    margin-right: 20px;
+    
+    padding: 15px 25px;
+    text-align: center;
+    cursor: pointer;
+    color: #101C45;
+    font-weight: bold;
+
+}
+.header .nav-right .booknow{
+    
+    color: #101C45;
+    border: 1px solid #101C45;
+    padding: 15px 25px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.main{
+    display:flex;
+    width: 457px;
+    height: 400px;
+    margin-top: 120px;
+}
+.main .kiri .content{
+    font-style: 'dm-sans';
+    color: #101C45;
+    font-weight: 400;
+    font-size: 48px;
+    width: 457px;
+    height: 186px;
+    word-spacing: 5px;
+
+}
+.main .kiri .subContent{
+    font-style: 'dm-sans';
+    margin-top: 20px;
+    color: #101C45;
+    font-weight: 400;
+    font-size: 18px;
+    width: 457px;
+    height: 90px;
+    word-spacing: 5px;
+
+}
+.main .kiri .btn-bookaA{
+    display: inline-block       ;
+    background-color: #203271;
+    padding: 15px 30px;
+    color: white;
+    font-size: 18px;
+}
+.main .kanan img{
+    margin-left:213px;
+    width: 400px;
+    height: 600px;
+    margin-top: -150px;
+}
+.main .card {
+    position: absolute;
+    margin-left: 500px;
+    margin-top: -70px;
+    padding:20px;
+    width: 240px;
+    height: 180px;
+    background-color: white;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 30px;
+}
+.card .profil {
+    display: flex;
+    align-items: center;
+    
+    
+}
+.card .profil img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+
+    flex-shrink: 0;
+}
+.card .profil .anomali{
+    margin-left: auto   ;
+}
+.card .profil .nama{
+    font-size: 12px;
+    font-weight: bold   ;
+    margin-left: 10px;
+}
+.info{
+    font-size: 12px;
+    margin-top: 12px;
+    word-spacing: 5px;
+    line-height: 20px;
+    color:#101C45
+}
+.bigcard{
+    
+   display: flex;
+    position: relative;
+    padding: 40px;
+    background-color: #203271;
+    align-items: flex-start ;
+    
+   
+
+    
+    
+}
+.bigcard .isi1{
+    display: flex;
+    flex-direction: column;
+    
+    
+}
+
+.bigcard .isi2{
+    display: flex;
+    flex-direction: column;
+    margin-top:17px;
+    
+}
+.bigcard .isi3{
+    display: flex;
+    flex-direction: column;
+    margin-top:17px;
+    
+}
+
+    
+   
+    
+    
+
+.bigcard  img{
+    width: 40px;
+    height: 40px;
+    margin-right: 25px;
+    
+    
+    
+   
+}
+.bigcard .judul{
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+
+}
+.bigcard .deskripsi{
+    font-size: 14px;
+    margin-top: 10px;
+    color: #f0f0f0;
+    line-height: 18px;
+    word-spacing: 5px;
+
+}
+
+

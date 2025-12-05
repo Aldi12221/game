@@ -1,0 +1,209 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+
+body .primary-color{
+    color: #4475F2;
+}
+
+.container{
+    width: 85%;
+    margin: auto;
+    height: 100vh;
+}
+.container img.kertas{
+    position: absolute;
+    width: 720px;
+    height: 713px;
+    z-index: -1;
+    right: 0;
+}
+.header{
+    display:flex;
+    
+    align-items: center;
+    padding-top: 40px;
+}
+.logo{
+    margin-right: 125px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.nav a.nav-item{
+    text-decoration: none;
+    font-size: 14px;
+    width: 48px;
+    height: 18px;
+    padding-right: 20px;
+    color: #9A9EA6;
+    
+}
+.nav a:hover{
+    color:#4475F2
+}
+.nav-kanan{
+    margin-left: auto;  
+}
+.nav a.nav-item.active{
+    color:#4475F2;
+    text-decoration: underline;
+}
+.nav-kanan button{
+    border-radius: 10px;
+    border: none;
+    padding: 9px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #181E4B;
+    background: white;
+}   
+
+.main{
+    display: flex;
+    
+    
+}
+.main-kiri{
+    padding-top: 50px;  
+
+}
+.main-kiri .judul{
+    font-size: 67px;
+    width: 600px;
+    height: 267px;
+    font-weight: bolder;
+    color: #181E4B;
+    line-height: 89px;
+    word-spacing: -4px;
+}
+.main-kiri .judul a{
+    text-decoration: underline;
+    color: #4475F2;
+}
+.main-kiri .sub-judul{
+    font-size: 16px;
+    line-height: 30px;
+    width: 450px;
+    height: 120px;
+    color:#5E6282;
+    padding-top: 30px;
+    padding-bottom: 34px;
+}
+.main-kiri .start-btn{
+   width: 200px;
+    height: 60px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: #4475F2;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+box-shadow: 0px 4px 10px rgba(68, 117, 242, 0.3);
+}
+.main-kiri .start-btn:hover{
+    scale: 105%;
+    transition: ease-in-out 0.2s;
+
+}
+.main-kanan {
+    display: flex;
+    position: relative;
+    right: 140px;
+    top: -10px;
+    
+
+}
+.features{
+   
+    margin-top:170px ;
+    height: 100vh;
+}
+.title{
+    margin-bottom: 90px;
+}
+.features .card{
+    display: flex;
+    text-align: center;
+   justify-content: space-between;
+}
+.features img{
+    height: 202px;
+    width: 202px;
+}
+.feat{
+    font-size: 18px;
+    font-weight: bolder;
+}
+.what{
+    font-size: 48px;
+    margin-top: 10px;
+}
+.features .item-judul{
+    font-size: 24px;
+    font-weight: bold;
+    position: relative;
+    bottom: 40px;
+}
+.features .sub-judul{
+    color: #5E6282;
+    line-height: 30px;
+    word-spacing: 2%;
+    font-size: 16px;
+    width: 281px;
+    height: 90px;
+}
+.services{
+    height: 100vh;
+}

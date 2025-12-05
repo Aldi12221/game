@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="./asset/Cover.png" alt="" class="kertas">
+        <div class="header">
+            <img src="./asset/Logo (1).png" alt="">
+            <div class="logo">Lidia</div>
+            <div class="nav">
+                <a href="#features" class="nav-item active">Feature</a>
+                <a href="#service" class="nav-item">Service</a>
+                <a href="" class="nav-item">Review</a>
+                <a href="" class="nav-item">Location</a>
+
+            </div>
+            <div class="nav-kanan">
+                <button class="login">Login</button>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="main-kiri">
+                <div class="judul">Search & review
+                    your <a>fav book </a>effortlessly'
+                </div>
+                <div class="sub-judul">
+                    Embark on a literary journey like never before with our revolutionary
+                    library application! Introducing a seamless experience
+                    that transcends traditional boundaries, where you
+                    can effortlessly search your favorite books.✨
+                </div>
+                <button class="start-btn">Start now →</button>
+
+            </div>
+            <div class="main-kanan">
+                <img src="./asset/Left.png" alt="">
+
+            </div>
+        </div>
+
+        <div class="features" id="features">
+            <div class="title">
+                <div class="primary-color feat">FEATURES</div>
+                <div class="what">🤔• What You Can Do?</div>
+            </div>
+            <div class="card">
+            <div class="search">
+                <img src="./asset/Icon.png" alt="">
+                <div class="item-judul">Search book</div>
+                <div class="sub-judul">Effortlessly find your next
+                    read with our powerful and intuitive
+                    book search.</div>
+            </div>
+            <div class="review">
+                <img src="./asset/Icon (1).png" alt="">
+                <div class="item-judul">Review book</div>
+                <div class="sub-judul">Discover insightful critiques and
+                    share your thoughts on diverse
+                    literary masterpieces effortlessly.</div>
+            </div>
+            <div class="wishlist">
+                <img src="./asset/Icon (2).png" alt="">
+                <div class="item-judul">Wishlist book</div>
+                <div class="sub-judul">Curate your literary
+                    dreams-wishlist books for future
+                    adventures and discoveries.</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="services" id="services">
+            <div class="title">
+                <div class="primary-color feat">SERVICES</div>
+                <div class="what">🚀• The Services for You</div>
+            </div>
+            <div class="rent">
+                <img src="" alt="">
+            </div>
+            <div class="quick">
+                
+            </div>
+
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navItems = document.querySelectorAll('.nav-item');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                navItems.forEach(i => {
+                    i.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            });
+        });
+    });
+
+    window.scrollY({
+        
+            
+    })
+</script>
+
+</html>

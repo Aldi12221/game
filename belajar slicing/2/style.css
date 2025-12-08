@@ -206,4 +206,13 @@ box-shadow: 0px 4px 10px rgba(68, 117, 242, 0.3);
 }
 .services{
     height: 100vh;
+    
+}
+.services .rent{
+    display: flex;
+    justify-content: space-between;
+}
+.services .quick{
+    display: flex;
+    justify-content: space-between;
 }

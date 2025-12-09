@@ -57,8 +57,9 @@ body .primary-color{
 
 .container{
     width: 85%;
+    
     margin: auto;
-    height: 100vh;
+   
 }
 .container img.kertas{
     position: absolute;
@@ -111,6 +112,7 @@ body .primary-color{
 
 .main{
     display: flex;
+    justify-content: space-between;
     
     
 }
@@ -157,14 +159,12 @@ box-shadow: 0px 4px 10px rgba(68, 117, 242, 0.3);
     transition: ease-in-out 0.2s;
 
 }
-.main-kanan {
-    display: flex;
-    position: relative;
-    right: 140px;
-    top: -10px;
+.main-kanan img {
+    position: absolute;
+    right: 55px;
     
 
-}
+}   
 .features{
    
     margin-top:170px ;
@@ -204,15 +204,180 @@ box-shadow: 0px 4px 10px rgba(68, 117, 242, 0.3);
     width: 281px;
     height: 90px;
 }
-.services{
-    height: 100vh;
+
+
+
+
+.services img{
+    width: 600px;
+    height: 400px;
+}
+
+
+.services .rent {
+    display: flex;
+    justify-content: space-between;
+    
+    margin-bottom: 40px;
+   
+    
     
 }
-.services .rent{
-    display: flex;
-    justify-content: space-between;
-}
 .services .quick{
+   display: flex;
+    justify-content: space-between;
+   
+    
+}
+.services .judul{
+    width: 418px;
+    height: 80px;
+    font-size: 32px;
+    word-spacing: 2%;
+    font-weight: medium;
+}
+.services .isi1{
+        margin-top:40px;
+        color: #5E6282;
+        font-size: 16px;
+        font-weight: medium;
+        line-height: 30px;
+        word-spacing: 2%;
+        width: 411px;
+        height: 120px;
+
+}
+.services .isi2{
+        margin-top:15px;
+        color: #5E6282;
+        font-size: 16px;
+        font-weight: medium;
+        line-height: 30px;
+        word-spacing: 2%;
+        width: 411px;
+        height: 120px;
+
+}
+
+
+.services .rent img{
+    position: relative;
+    left: -50px;
+    top: -10px;
+}
+.services .quick img{
+    position: relative;
+    right: -50px;
+    top: -10px;
+   
+    
+    
+}
+
+
+
+.reviews{
+    margin-bottom: 200px;
+    margin-top: 200px;
+}
+
+.reviews .card-container{
     display: flex;
     justify-content: space-between;
+    gap: 50px;
+
 }
+.reviews .card{
+    text-align: center;
+    width: 325px;   
+    height: 420px;
+    position: mixed;
+    padding:40px  40px ;
+    box-shadow: 10px 60px 40px 10px rgba(0, 0, 0, 0.1);
+    
+    
+}
+.reviews img{
+    width: 150px;
+    height: 150px;
+}
+.reviews .card .profil{
+        margin-top: 30px;
+        font-size: 16px;
+        line-height: 30px;
+        word-spacing: 0.2px;
+        color: #5E6282;
+        font-weight: medium;
+}
+.reviews .card .nama{
+        color: #23A6F0;
+        padding-top: 25px;
+        font-size: 16px;
+        line-height: 30px;
+        word-spacing: 0.2px;
+        font-weight: medium;
+}
+.reviews .card .status{
+    color: #181E4B;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 30px;
+    word-spacing: 0.2px;
+    font-weight: medium;
+
+}
+.location .gambar-map{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;  
+}
+.location .gambar-map img{
+    width: 1200px;
+    height: 405px;
+    position: relative;
+    top: -100px;
+
+
+}
+.footer .company {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    margin:auto;
+    align-items: center;
+    margin-bottom: 94px;
+}
+.footer .company .judul {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    
+   
+}
+.footer .copyright{
+    height: 100px;
+    width: 100%;
+    background-color: #4475F2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.footer .copyright p{
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffff;
+    
+}
+
+
+.footer .company .managed img {
+    width: 140px;
+    height: 50px;
+}
+.footer .company .sosial-Media img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+

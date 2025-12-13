@@ -70,9 +70,10 @@ body .primary-color{
 }
 .header{
     display:flex;
-    
     align-items: center;
     padding-top: 40px;
+    
+    
 }
 .logo{
     margin-right: 125px;
@@ -113,6 +114,7 @@ body .primary-color{
 .main{
     display: flex;
     justify-content: space-between;
+   
     
     
 }

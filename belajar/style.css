@@ -13,3 +13,10 @@
 .wall{
     background:#666;
 }
+.cell.explosion {
+    animation: boom 0.2s infinite alternate;
+}
+@keyframes boom {
+    from{background: orange;}
+    to{background: red;}
+}
